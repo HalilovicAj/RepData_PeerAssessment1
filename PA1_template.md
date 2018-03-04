@@ -5,13 +5,15 @@ output:
     keep_md: true
 ---
 
-```{r, message=F, warning=F}
+
+```r
 library(ggplot2)
 ```
 
 ## Loading and preprocessing the data
 
-```{r}
+
+```r
 data <- read.csv("activity.csv",na.strings = "NA", header = TRUE)
 ```
 
@@ -19,7 +21,8 @@ data <- read.csv("activity.csv",na.strings = "NA", header = TRUE)
 
 Here is a histogram of the total number of steps taken per day:
 
-```{r}
+
+```r
 steps_per_day <-aggregate(data$steps, by=list(data$date), FUN=sum, na.rm=TRUE)
 names(steps_per_day) <- c("Date","Total_number_of_steps")
 
@@ -28,21 +31,34 @@ hist(steps_per_day$Total_number_of_steps,breaks=10,
      main="Steps per day")
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+
 The mean and the median total number of steps per day are
 
-```{r}
+
+```r
 mean(steps_per_day$Total_number_of_steps)
+```
+
+```
+## [1] 9354.23
 ```
 
 and
 
-```{r}
+
+```r
 median(steps_per_day$Total_number_of_steps)
+```
+
+```
+## [1] 10395
 ```
 
 ## What is the average daily activity pattern?
 
-```{r}
+
+```r
 avg_steps_per_interval <- aggregate(data$steps, by=list(data$interval), FUN=mean, na.rm=TRUE)
 names(avg_steps_per_interval) <- c("Interval","Average_number_of_steps")
 
@@ -52,24 +68,37 @@ plot(avg_steps_per_interval,
      main="Average daily activity pattern")
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
+
 The 5-minute interval which on average (across all the days in the dataset) contains the maximum number of steps is
 
-```{r}
+
+```r
 avg_steps_per_interval[which(avg_steps_per_interval$Average_number_of_steps
                              ==max(avg_steps_per_interval$Average_number_of_steps)),1]
+```
+
+```
+## [1] 835
 ```
 
 ## Imputing missing values
 
 The number of rows containiing missing values is
 
-```{r}
+
+```r
 dim(data[!complete.cases(data), ])[1]
+```
+
+```
+## [1] 2304
 ```
 
 If missing values are filled in, the above histogram of steps per day changes to 
 
-````{r}
+
+```r
 data_with_missings_filled_in       <- data
 data_with_missings_filled_in$steps <- ifelse(is.na(data_with_missings_filled_in$steps), 
                                              avg_steps_per_interval[which(avg_steps_per_interval$Interval
@@ -85,16 +114,31 @@ hist(steps_per_day_new$Total_number_of_steps,breaks=10,
      main="Steps per day")
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
+
 The mean and the median total number of steps per day increase to
 
-```{r}
+
+```r
 mean(steps_per_day_new$Total_number_of_steps)
+```
+
+```
+## [1] 9530.724
+```
+
+```r
 median(steps_per_day_new$Total_number_of_steps)
+```
+
+```
+## [1] 10439
 ```
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
-```{r}
+
+```r
 data$weekday <- ifelse(weekdays(as.Date(data$date)) %in% c("Saturday","Sunday"),"weekend","weekday")
 data$weekday <- as.factor(data$weekday)
 
@@ -108,3 +152,5 @@ ggplot(avg_steps_per_interval_w, aes(x=Interval, y=Average_number_of_steps)) +
     labs(y="Average number of steps")+
     theme(plot.title = element_text(hjust = 0.5))
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
